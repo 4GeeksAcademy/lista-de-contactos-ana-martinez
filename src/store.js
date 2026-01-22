@@ -12,15 +12,15 @@ export default function storeReducer(store, action = {}) {
         ...store,
         contacts: action.payload || []
       };
-    
+
     case 'add_contact':
       if (!action.payload) return store;
       return {
         ...store,
         contacts: [...store.contacts, action.payload],
-        message: "Contacto creado exitosamente"
+        message: `✅ Contacto "${action.payload.name}" creado exitosamente`
       };
-    
+
     case 'update_contact':
       if (!action.payload || !action.payload.id) {
         console.error("Error: payload sin id en update_contact", action.payload);
@@ -31,22 +31,23 @@ export default function storeReducer(store, action = {}) {
         contacts: store.contacts.map(contact =>
           contact.id === action.payload.id ? action.payload : contact
         ),
-        message: "Contacto actualizado exitosamente"
+        message: `✅ Contacto "${action.payload.name}" actualizado exitosamente`
       };
-    
+
     case 'delete_contact':
+      const deletedContact = store.contacts.find(c => c.id === action.payload.id);
       return {
         ...store,
-        contacts: store.contacts.filter(contact => contact.id !== action.payload),
-        message: "Contacto eliminado exitosamente"
+        contacts: store.contacts.filter(contact => contact.id !== action.payload.id),
+        message: `🗑️ Contacto "${action.payload.name || deletedContact?.name || ''}" eliminado exitosamente`
       };
-    
+
     case 'clear_message':
       return {
         ...store,
         message: null
       };
-    
+
     default:
       throw Error('Unknown action.');
   }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 import { ContactCard } from "../components/ContactCard";
+import { PageSpinner } from "../components/Spinner";
 import { Link } from "react-router-dom";
 
 const AGENDA_SLUG = "ana_martinez";
@@ -61,8 +62,23 @@ export const Contact = () => {
     fetchContacts();
   }, [dispatch]);
 
+  // Auto-cerrar mensajes después de 3 segundos
+  useEffect(() => {
+    if (store.message) {
+      const timer = setTimeout(() => {
+        dispatch({ type: "clear_message" });
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [store.message, dispatch]);
+
   if (loading) {
-    return <div className="container mt-5"><h3>Cargando contactos...</h3></div>;
+    return (
+      <div className="container mt-5">
+        <PageSpinner message="Cargando contactos..." />
+      </div>
+    );
   }
 
   if (error) {
